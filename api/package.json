@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "node build.js",
-    "check": "tsc --pretty --noEmit"
+    "check": "tsc --pretty --noEmit",
+    "deploy-yoga": "rm -rf dist && yarn run build && cd dist/azurefunction && zip af.zip -r * && cd ../.. && az functionapp deployment source config-zip -g sls-weur-dev-simpletest-rg -n sls-weur-dev-simpletest --src dist/azurefunction/af.zip"
   },
   "dependencies": {
     "@redwoodjs/api": "3.3.0",

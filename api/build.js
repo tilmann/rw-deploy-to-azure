@@ -5,7 +5,7 @@ const { build } = require('esbuild')
 async function main() {
   await build({
     entryPoints: ['./src/functions/simpleTest/yoga.ts'],
-    outfile: 'dist/Yoga/index.js',
+    outfile: 'dist/azurefunction/Yoga/index.js',
     format: 'cjs',
     minify: false,
     bundle: true,
@@ -14,7 +14,7 @@ async function main() {
   })
 
   writeFileSync(
-    './dist/package.json',
+    './dist/azurefunction/package.json',
     JSON.stringify({
       name: 'yoga-test-function',
       version: '0.0.1',
@@ -22,7 +22,7 @@ async function main() {
   )
 
   writeFileSync(
-    './dist/host.json',
+    './dist/azurefunction/host.json',
     JSON.stringify({
       version: '2.0',
       logging: {
@@ -41,7 +41,7 @@ async function main() {
   )
 
   writeFileSync(
-    './dist/Yoga/function.json',
+    './dist/azurefunction/Yoga/function.json',
     JSON.stringify({
       bindings: [
         {
