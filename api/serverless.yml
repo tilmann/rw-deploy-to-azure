@@ -1,68 +1,138 @@
-# See the full yml reference at https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
-service: rw-deploy-to-azure-api
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
 
-# Uncomment `org` and `app` and enter manually if you want to integrate your
-# deployment with the Serverless dashboard, or run `yarn serverless` in ./api to be
-# prompted to connect to an app and these will be filled in for you.
-# See https://www.serverless.com/framework/docs/dashboard/ for more details.
-# org: your-org
-# app: your-app
+service: simpletest
 
-useDotenv: true
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: '3'
 
 provider:
-  name: aws
-  runtime: nodejs14.x
-  region: us-east-1 # AWS region where the service will be deployed, defaults to N. Virginia
-  httpApi:          # HTTP API is used by default. To learn about the available options in API Gateway, see https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html
-    cors:
-      allowedOrigins:
-        - '*' # This is the default value. You can remove this line if you want to restrict the CORS to a specific origin.
-      # allowCredentials: true # allowCredentials should only be used when allowedOrigins doesn't include '*'
-      allowedHeaders:
-        - authorization
-        - auth-provider
-        - content-type
-        - X-Amz-Date
-        - X-Api-Key
-        - X-Amz-Security-Token
-        - X-Amz-User-Agent
-    payload: '1.0'
-    useProviderTags: true # https://www.serverless.com/framework/docs/deprecations/#AWS_HTTP_API_USE_PROVIDER_TAGS
-  stackTags:
-    source: serverless
-    name: Redwood Lambda API with HTTP API Gateway
-  tags:
-    name: Redwood Lambda API with HTTP API Gateway
-  lambdaHashingVersion: 20201221 # https://www.serverless.com/framework/docs/deprecations/#LAMBDA_HASHING_VERSION_V2
-  environment:
-    # Add environment variables here, either in the form
-    # VARIABLE_NAME: ${env:VARIABLE_NAME} for vars in your local environment, or
-    # VARIABLE_NAME: ${param:VARIABLE_NAME} for vars from the Serverless dashboard
+  name: azure
+  region: West US 2
+  runtime: nodejs12
+  # os: windows  # windows is default, linux is available
+  # prefix: "sample"  # prefix of generated resource name
+  # subscriptionId: A356AC8C-E310-44F4-BF85-C7F29044AF99
+  # stage: dev
+  # type: premium  # premium azure functions
 
+  environment: # these will be created as application settings
+    VARIABLE_FOO: 'foo'
+
+  # you can define apim configuration here
+  # apim:
+  #   apis:
+  #     - name: v1
+  #       subscriptionRequired: false # if true must provide an api key
+  #       displayName: v1
+  #       description: V1 sample app APIs
+  #       protocols:
+  #         - https
+  #       path: v1
+  #       tags:
+  #         - tag1
+  #         - tag2
+  #       authorization: none
+  #   cors:
+  #     allowCredentials: false
+  #     allowedOrigins:
+  #       - "*"
+  #     allowedMethods:
+  #       - GET
+  #       - POST
+  #       - PUT
+  #       - DELETE
+  #       - PATCH
+  #     allowedHeaders:
+  #       - "*"
+  #     exposeHeaders:
+  #       - "*"
+
+plugins: # look for additional plugins in the community plugins repo: https://github.com/serverless/plugins
+  - serverless-azure-functions
+
+# you can add packaging information here
 package:
-  individually: true
   patterns:
-    - "!node_modules/.prisma/client/libquery_engine-*"
-    - "node_modules/.prisma/client/libquery_engine-rhel-*"
-    - "!node_modules/prisma/libquery_engine-*"
-    - "!node_modules/@prisma/engines/**"
+    # - '!exclude-me.js'
+    # - '!exclude-me-dir/**'
+    - '!local.settings.json'
+    - '!.vscode/**'
+    # - include-me.js
+    # - include-me-dir/**
 
 functions:
-  graphql:
-    description: graphql function deployed on AWS Lambda
-    package:
-      artifact: dist/zipball/graphql.zip
-    memorySize: 1024 # in megabytes
-    timeout: 25      # seconds (max: 900 [15 minutes])
-    tags:            # tags for this specific lambda function
-      endpoint: /graphql
-    handler: graphql.handler
+  hello:
+    handler: src/functions/simpleTest/src/handlers/hello.sayHello
     events:
-      - httpApi:     # if a function should be limited to only GET or POST you can remove one or the other here
-          path: /graphql
-          method: GET
-      - httpApi:
-          path: /graphql
-          method: POST
+      - http: true
+        methods:
+          - GET
+        authLevel: anonymous # can also be `function` or `admin`
 
+  goodbye:
+    handler: src/functions/simpleTest/src/handlers/goodbye.sayGoodbye
+    events:
+      - http: true
+        methods:
+          - GET
+        authLevel: anonymous
+  # The following are a few examples of other events you can configure:
+  # storageBlob:
+  #   handler: src/handlers/storageBlob.printMessage
+  #   events:
+  #     - blob:
+  #       x-azure-settings:
+  #         name: blob # Specifies which name is available on `context`
+  #         path: blob-sample/{blobName}
+  #         connection: AzureWebJobsStorage # App Setting/environment variable which contains Storage Account Connection String
+  # storageQueue:
+  #   handler: src/handlers/storageQueue.printMessage
+  #   events:
+  #     - queue: queue-sample
+  #       x-azure-settings:
+  #         name: message # Specifies which naem is available on `context`
+  #         connection: AzureWebJobsStorage
+  # timer:
+  #   handler: src/handlers/timer.printMessage
+  #   events:
+  #     - timer:
+  #       x-azure-settings:
+  #         schedule: '*/10 * * * * *'
+  # eventhub:
+  #   handler: src/handlers/eventHub.printMessage
+  #   events:
+  #     - eventHub:
+  #       x-azure-settings:
+  #         name: eventHubMessages # Specifies which name it's available on `context`
+  #         eventHubName: sample-hub # Specifies the Name of the Event Hub
+  #         consumerGroup: $Default # Specifies the consumerGroup to listen with
+  #         connection: EVENT_HUBS_CONNECTION # App Setting/environment variable which contains Event Hubs Namespace Connection String
+  # serviceBusQueue:
+  #   handler: src/handlers/serviceBusQueue.printMessage
+  #   events:
+  #     - serviceBus:
+  #       x-azure-settings:
+  #         name: message # Specifies which name is available on `context`
+  #         queueName: sample-queue # Name of the service bus queue to consume
+  #         connection: SERVICE_BUS_CONNECTION # App Setting/environment variable variable which contains Service Bus Namespace Connection String
+  # serviceBusTopic:
+  #   handler: src/handlers/serviceBusTopic.printMessage
+  #   events:
+  #     - serviceBus:
+  #       x-azure-settings:
+  #         name: message # Specifies which name it's available on `context`
+  #         topicName: sample-topic # Name of the service bus topic to consume
+  #         subscriptionName: sample-subscription # Name of the topic subscription to retrieve from
+  #         connection: SERVICE_BUS_CONNECTION # App Setting/environment variable variable which contains Service Bus Namespace Connection String
