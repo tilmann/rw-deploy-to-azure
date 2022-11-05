@@ -71,10 +71,11 @@ package:
     - '!.vscode/**'
     # - include-me.js
     # - include-me-dir/**
+  artifact: dist/archive.zip
 
 functions:
   hello:
-    handler: src/functions/simpleTest/hello.sayHello
+    handler: dist/functions/simpleTest/hello.sayHello
     events:
       - http: true
         methods:
@@ -82,7 +83,7 @@ functions:
         authLevel: anonymous # can also be `function` or `admin`
 
   goodbye:
-    handler: src/functions/simpleTest/goodbye.sayGoodbye
+    handler: dist/functions/simpleTest/goodbye.sayGoodbye
     events:
       - http: true
         methods:

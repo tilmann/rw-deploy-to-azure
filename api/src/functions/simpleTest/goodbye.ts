@@ -1,4 +1,5 @@
 'use strict'
+import _ from 'lodash'
 
 module.exports.sayGoodbye = async function (context, req) {
   context.log('JavaScript HTTP trigger function processed a request.')
