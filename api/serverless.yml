@@ -19,8 +19,8 @@ frameworkVersion: '3'
 
 provider:
   name: azure
-  region: West US 2
-  runtime: nodejs12
+  region: West Europe
+  runtime: nodejs14
   # os: windows  # windows is default, linux is available
   # prefix: "sample"  # prefix of generated resource name
   # subscriptionId: A356AC8C-E310-44F4-BF85-C7F29044AF99
@@ -74,7 +74,7 @@ package:
 
 functions:
   hello:
-    handler: src/functions/simpleTest/src/handlers/hello.sayHello
+    handler: src/functions/simpleTest/hello.sayHello
     events:
       - http: true
         methods:
@@ -82,7 +82,7 @@ functions:
         authLevel: anonymous # can also be `function` or `admin`
 
   goodbye:
-    handler: src/functions/simpleTest/src/handlers/goodbye.sayGoodbye
+    handler: src/functions/simpleTest/goodbye.sayGoodbye
     events:
       - http: true
         methods:
