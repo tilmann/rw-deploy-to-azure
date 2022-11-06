@@ -5,7 +5,7 @@ import { handler } from './wrapTest'
 //   Improve this test with help from the Redwood Testing Doc:
 //    https://redwoodjs.com/docs/testing#testing-functions
 
-describe('wrapTest function', () => {
+describe.skip('wrapTest function', () => {
   it('Should respond with 200', async () => {
     const httpEvent = mockHttpEvent({
       queryStringParameters: {
