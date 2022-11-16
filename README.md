@@ -1,3 +1,8 @@
+# How to deploy
+
+Look at the command that is triggered with `yarn run deploy:functions`.
+
+
 # README
 
 Welcome to [RedwoodJS](https://redwoodjs.com)!
