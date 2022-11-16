@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions'
-import { Request } from '@whatwg-node/fetch'
+import type { APIGatewayProxyEvent, Context as LambdaContext } from 'aws-lambda'
 
 import { createGraphQLHandler } from '@redwoodjs/graphql-server'
 
@@ -19,6 +19,10 @@ const httpTrigger: AzureFunction = async function (
     directives,
     sdls,
     services,
+    // cors: {
+    //   origin: process.env.BASE_URL,
+    //   credentials: true,
+    // },
     onException: () => {
       // Disconnect from your database with an unhandled exception.
       db.$disconnect()
@@ -26,22 +30,27 @@ const httpTrigger: AzureFunction = async function (
   })
   context.log('HTTP trigger function processed a request.')
 
+  context.log('The request body:', req.body)
+  context.log('The request headers:', req.headers)
+
   try {
-    const request = new Request(req.url, {
-      method: req.method,
-      body: req.rawBody,
+    const event = {
+      httpMethod: req.method,
+      isBase64Encoded: false,
+      body: req.body,
       headers: req.headers,
-    })
+      path: '/users',
+    } as unknown as APIGatewayProxyEvent
 
-    context.log('The request:', request)
+    const lambdaContext = {} as LambdaContext
 
-    const response = await handler(request as any, context as any)
-    // const responseText = await response.text()
+    const response = await handler(event, lambdaContext)
+
     context.log('GraphQL response:', response)
 
     context.res = {
       status: response.statusCode,
-      body: JSON.stringify(response),
+      body: response.body,
       headers: response.headers,
     }
   } catch (e) {
