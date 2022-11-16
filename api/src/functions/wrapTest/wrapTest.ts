@@ -37,7 +37,7 @@ const httpTrigger: AzureFunction = async function (
     const event = {
       httpMethod: req.method,
       isBase64Encoded: false,
-      body: req.body,
+      body: req.rawBody,
       headers: req.headers,
       path: '/users',
     } as unknown as APIGatewayProxyEvent
